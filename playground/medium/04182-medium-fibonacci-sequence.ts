@@ -21,7 +21,56 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Fibonacci<T extends number> = any
+// This one is not 0 index, is 1 index
+// Fib(1) = 1
+// Fib(2) = 1
+// Fib(3) = 2
+// Fib(n) = Fib(n-1) + Fib(n-2)
+
+// type TupleWithLength<T extends number, Acc extends unknown[] = []> =
+//   1 extends 0
+//   ? never
+//   : T extends Acc["length"]
+//     ? Acc
+//     : TupleWithLength<T, [...Acc, Acc["length"]]>
+// ;
+
+// type MinusOne<T extends number> =
+//   TupleWithLength<T> extends [any, ...infer Tail]
+//   ? Tail["length"]
+//   : never
+// ;
+
+// type FibHelper<T extends number> =
+//   T extends 0
+//   ? []
+//   : T extends 1 | 2
+//     ? [1]
+//     : [...FibHelper<MinusOne<T>>, ...FibHelper<MinusOne<MinusOne<T>>>]
+// ;
+
+// type Fibonacci<T extends number> = FibHelper<T>["length"];
+
+type FibHelper<T extends number, CurrentIndex extends 1[] = [1], Prev extends 1[] = [], Current extends 1[] = [1]> =
+  T extends 0
+  ? []
+  : CurrentIndex["length"] extends T
+    ? Current
+    : FibHelper<T, [...CurrentIndex, 1], Current, [...Prev, ...Current]>
+;
+
+type Fibonacci<T extends number> = FibHelper<T>["length"];
+
+type A0 = Fibonacci<0>;
+  // ^?
+type A = Fibonacci<1>;
+  // ^?
+type B = Fibonacci<2>;
+  // ^?
+type C = Fibonacci<3>;
+  // ^?
+type D = Fibonacci<8>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

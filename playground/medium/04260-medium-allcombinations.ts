@@ -19,7 +19,29 @@
 
 /* _____________ Your Code Here _____________ */
 
-type AllCombinations<S> = any
+type StringToUnion<T extends string> =
+  T extends `${infer Head}${infer Tail}`
+    ? Head | StringToUnion<Tail>
+    : never
+;
+
+
+type AllCombinations<S extends string, K extends string = StringToUnion<S>, Union extends string = StringToUnion<S>> =
+  Union extends Union
+  ? Union | AllCombinations<`${Union}${Exclude<K, Union>}`,Exclude<K, Union> ,Exclude<K, Union>> | AllCombinations<`${Exclude<K, Union>}${Union}`,Exclude<K, Union> ,Exclude<K, Union>>
+  : ""
+;
+
+type A = AllCombinations<"">;
+  // ^?
+type B = AllCombinations<"A">;
+  // ^?
+type C = AllCombinations<"AB">;
+  // ^?
+type D = AllCombinations<"ABC">;
+  // ^?
+type E = AllCombinations<"ABCD">;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

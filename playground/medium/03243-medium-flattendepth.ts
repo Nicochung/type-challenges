@@ -77,7 +77,7 @@
 //   : []
 // ;
 
-type FlattenDepth<T extends unknown[], Depth extends number = 1,Count extends 1[] = []> =
+type FlattenDepth<T extends unknown[], Depth extends number = 1, Count extends 1[] = []> =
   Count["length"] extends Depth
   ? T
   : T extends [infer Head, ...infer Tail]

@@ -16,8 +16,15 @@
 
 /* _____________ Your Code Here _____________ */
 
-type BEM<B extends string, E extends string[], M extends string[]> = any
+type BEM<B extends string, E extends string[], M extends string[]> =
+  `${B}${E extends [] ? "" : `__${E[number]}`}${M extends [] ? "" : `--${M[number]}`}`
 
+type A = BEM<'btn', ['price'], []>;
+  // ^?
+type B = BEM<'btn', ['price'], ['warning', 'success']>;
+  // ^?
+type C = BEM<'btn', [], ['small', 'medium', 'large']>;
+  // ^?
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
 

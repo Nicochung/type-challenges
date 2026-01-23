@@ -20,7 +20,26 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Flip<T> = any
+// type Flip<T extends Record<PropertyKey, string | number | boolean>, K extends keyof T = keyof T> = {
+//   [P in `${T[K]}`]: K extends K
+//                 ? `${T[K]}` extends `${P}`
+//                   ? K
+//                   : never
+//                 : never;
+// };
+
+type Flip<T extends Record<PropertyKey, string | number | boolean>> = {
+  [P in keyof T as `${T[P]}`]: P;
+};
+
+type A = Flip<{ a: 'pi' }>;
+    //^?
+type B = Flip<{ b: 'pi' }>;
+    //^?
+type C = Flip<{ pi: 3.14, bool: true }>;
+    //^?
+type D = Flip<{ prop: 'val', prop2: 'val2' }>;
+    //^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect, NotEqual } from '@type-challenges/utils'
