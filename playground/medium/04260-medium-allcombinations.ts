@@ -25,12 +25,33 @@ type StringToUnion<T extends string> =
     : never
 ;
 
+type Replace<S extends string, From extends string, To extends string> =
+  S extends `${infer Head}${From}${infer Tail}`
+  ? `${Head}${To}${Tail}`
+  : S
+;
 
-type AllCombinations<S extends string, K extends string = StringToUnion<S>, Union extends string = StringToUnion<S>> =
-  Union extends Union
-  ? Union | AllCombinations<`${Union}${Exclude<K, Union>}`,Exclude<K, Union> ,Exclude<K, Union>> | AllCombinations<`${Exclude<K, Union>}${Union}`,Exclude<K, Union> ,Exclude<K, Union>>
+// type AllCombinations<S extends string, Acc extends string = "", K extends string = StringToUnion<S>> =
+//   [K] extends [never]
+//   ? Acc
+//   : K extends K
+//     ? Acc | AllCombinations<Replace<S, K, "">,`${K}${Acc}`>
+//     : never
+// ;
+
+type AllCombinations<S extends string, Acc extends string = ""> =
+  S extends `${infer Head}${infer Tail}`
+  ? `${Head}${AllCombinations<`${Acc}${Tail}`>}` | AllCombinations<Tail, `${Acc}${Head}`>
   : ""
 ;
+
+// type AllCombinations<S extends string, Acc extends string = StringToUnion<S>> =
+//   [Acc] extends [never]
+//   ? ""
+//   : "" | {
+//     [K in Acc]: `${K}${AllCombinations<never,Exclude<Acc, K>>}`
+//   }[Acc]
+// ;
 
 type A = AllCombinations<"">;
   // ^?

@@ -19,7 +19,43 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Chunk = any
+// type Chunk<T extends unknown[], Length extends number> = InternalChunk<T, Length>;
+
+// type InternalChunk<T extends unknown[], Length extends number, Temp extends unknown[] = [], Acc extends unknown[] = []> =
+//   T extends [infer Head, ...infer Tail]
+//   // Acc full push item into Acc and count from zero
+//   ? Temp["length"] extends Length
+//     ? InternalChunk<Tail, Length,[Head], [...Acc, Temp]>
+//     : InternalChunk<Tail, Length,[...Temp, Head], Acc>
+//   // If we still have items in temp, need to push it to Acc as well
+//   : Temp["length"] extends 0
+//     ? Acc
+//     : [...Acc, Temp];
+// ;
+
+type Chunk<T extends unknown[], Length extends number, Acc extends unknown[] = []> =
+  T extends [infer Head, ...infer Tail]
+  ? Acc["length"] extends Length
+    ? [Acc, ...Chunk<T, Length>]
+    : Chunk<Tail, Length,[...Acc, Head]>
+  // If we still have items in temp, need to push it to Acc as well
+  : Acc["length"] extends 0
+    ? Acc
+    : [Acc];
+;
+
+type A = Chunk<[], 1>;
+  // ^?
+type B = Chunk<[1, 2, 3], 1>;
+  // ^?
+type C = Chunk<[1, 2, 3], 2>;
+  // ^?
+type D = Chunk<[1, 2, 3, 4], 2>;
+  // ^?
+type E = Chunk<[1, 2, 3, 4], 5>;
+  // ^?
+type F = Chunk<[1, true, 2, false], 2>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

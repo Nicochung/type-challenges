@@ -15,7 +15,41 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Zip<T, U> = any
+// type Zip<T extends unknown[], U extends unknown[], Acc extends unknown[] = []> =
+//   T extends [infer Thead, ...infer TTail]
+//   ? U extends [infer UHead, ...infer UTail]
+//     ? Zip<TTail , UTail, [...Acc, [Thead, UHead]]>
+//     : Acc
+//   : Acc
+// ;
+
+// type Zip<T extends unknown[], U extends unknown[]> =
+//   T extends [infer Thead, ...infer TTail]
+//   ? U extends [infer UHead, ...infer UTail]
+//     ? [[Thead, UHead], ...Zip<TTail , UTail>]
+//     : []
+//   : []
+// ;
+
+type Zip<T extends unknown[], U extends unknown[]> =
+  [T, U] extends [
+    [infer Thead, ...infer TTail],
+    [infer UHead, ...infer UTail]
+  ]
+  ? [[Thead, UHead], ...Zip<TTail , UTail>]
+  : []
+;
+
+type A = Zip<[], []>;
+  // ^?
+type B = Zip<[1, 2], [true, false]>;
+  // ^?
+type C = Zip<[1, 2, 3], ['1', '2']>;
+  // ^?
+type D = Zip<[], [1, 2, 3]>;
+  // ^?
+type E = Zip<[[1, 2]], [3]>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

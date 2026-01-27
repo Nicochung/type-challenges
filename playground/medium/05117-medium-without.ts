@@ -18,7 +18,50 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Without<T, U> = any
+// type Without<T extends unknown[], U extends number | unknown[]> =
+//   U extends unknown[]
+//   ? InternalWithout<T, U[number]>
+//   : InternalWithout<T, U>
+// ;
+
+// type InternalWithout<T extends unknown[], U extends unknown, Acc extends unknown[] = []> =
+//   T extends [infer Head, ...infer Tail]
+//   ? Head extends U
+//     ? InternalWithout<Tail, U, Acc>
+//     : InternalWithout<Tail, U, [...Acc, Head]>
+//   : Acc;
+// ;
+
+// type Without<T extends unknown[], U extends number | unknown[]> =
+//   U extends unknown[]
+//   ? InternalWithout<T, U[number]>
+//   : InternalWithout<T, U>
+// ;
+
+// type InternalWithout<T extends unknown[], U extends unknown> =
+//   T extends [infer Head, ...infer Tail]
+//   ? Head extends U
+//     ? [...InternalWithout<Tail, U>]
+//     : [Head, ...InternalWithout<Tail, U>]
+//   : [];
+// ;
+
+type ToUnion<T> = T extends unknown[] ? T[number] : T;
+
+type Without<T extends unknown[], U extends number | unknown[]> =
+  T extends [infer Head, ...infer Tail]
+  ? Head extends ToUnion<U>
+    ? Without<Tail, U>
+    : [Head, ...Without<Tail, U>]
+  : [];
+;
+
+type A = Without<[1, 2], 1>;
+  // ^?
+type B = Without<[1, 2, 4, 1, 5], [1, 2]>;
+  // ^?
+type C = Without<[2, 3, 2, 3, 2, 3, 2, 3], [2, 3]>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

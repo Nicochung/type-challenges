@@ -19,7 +19,40 @@
 
 /* _____________ Your Code Here _____________ */
 
-type LastIndexOf<T, U> = any
+type IsSame<A,B> =
+  A extends B
+  ? B extends A
+    ? true
+    : false
+  : false
+;
+
+// type LastIndexOf<T extends unknown[], U, lastIndex extends number = -1, Count extends 1[] = []> =
+//   T["length"] extends Count["length"]
+//   ? lastIndex
+//   : IsSame<T[Count["length"]], U> extends true
+//     ? LastIndexOf<T, U, Count["length"], [...Count, 1]>
+//     : LastIndexOf<T, U, lastIndex, [...Count, 1]>
+;
+type LastIndexOf<T extends unknown[], U> =
+  T extends [...infer Head, infer Tail]
+  ? IsSame<Tail, U> extends true
+    ? Head["length"]
+    : LastIndexOf<Head, U>
+  : -1
+;
+
+
+type A = LastIndexOf<[1, 2, 3, 2, 1], 2>;
+  // ^?
+type B = LastIndexOf<[2, 6, 3, 8, 4, 1, 7, 3, 9], 3>;
+  // ^?
+type C = LastIndexOf<[0, 0, 0], 2>;
+  // ^?
+type D = LastIndexOf<[string, 2, number, 'a', number, 1], number>;
+  // ^?
+type E = LastIndexOf<[string, any, 1, number, 'a', any, 1], any>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

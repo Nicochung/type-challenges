@@ -18,7 +18,41 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Trunc = any
+// Convert signed string into number, trunc to closest 0
+type Helper<T extends string> =
+  T extends ""
+  ? "0"
+  : T extends "-"
+    ? "-0"
+    : T
+;
+
+type Trunc<T extends number | string> =
+  `${T}` extends `${infer Head}.${string}`
+  ? Helper<Head>
+  : Helper<`${T}`>
+;
+
+type A = Trunc<0.1>;
+  // ^?
+type B = Trunc<0.2>;
+  // ^?
+type C = Trunc<1.234>;
+  // ^?
+type D = Trunc<12.345>;
+  // ^?
+type E = Trunc<-5.1>;
+  // ^?
+type F = Trunc<'.3'>;
+  // ^?
+type G = Trunc<'1.234'>;
+  // ^?
+type H = Trunc<"-.3">;
+  // ^?
+type I = Trunc<"-10.234">;
+  // ^?
+type J = Trunc<"10">;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

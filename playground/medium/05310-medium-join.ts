@@ -19,7 +19,32 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Join<T, U> = any
+// type Join<T extends string[], U extends number | string = ","> =
+//   T extends [infer Head extends string, ...infer Tail extends string[]]
+//   ? Tail extends []
+//     ? Head
+//     : `${Head}${U}${Join<Tail, U>}`
+//   : ""
+// ;
+
+type Join<T extends string[], U extends number | string = ","> =
+  T extends [infer Head extends string, ...infer Tail extends string[]]
+  ? `${Head}${Tail extends [] ? "" :U}${Join<Tail, U>}`
+  : ""
+;
+
+type A = Join<['a', 'p', 'p', 'l', 'e'], '-'>;
+  // ^?
+type B = Join<['Hello', 'World'], ' '>;
+  // ^?
+type C = Join<['2', '2', '2'], 1>;
+  // ^?
+type D = Join<['o'], 'u'>;
+  // ^?
+type E = Join<[], 'u'>;
+  // ^?
+type F = Join<['1', '1', '1']>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

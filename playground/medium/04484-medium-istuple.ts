@@ -20,7 +20,26 @@
 
 /* _____________ Your Code Here _____________ */
 
-type IsTuple<T> = any
+// type IsTuple<T> =
+//   [T] extends [never]
+//   ? false
+//   : T extends readonly [] | readonly [unknown, ...unknown[]]
+//     ? true
+//     : false
+// ;
+
+
+// Tuple length is always a known length e.g 1, 2, 3
+// number extends 1 ? true : false -> false
+type IsTuple<T> =
+  [T] extends [never]
+  ? false
+  : T extends readonly unknown[]
+    ? number extends T["length"]
+      ? false
+      : true
+    : false
+;
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

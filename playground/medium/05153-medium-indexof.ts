@@ -18,7 +18,45 @@
 
 /* _____________ Your Code Here _____________ */
 
-type IndexOf<T, U> = any
+type IsSame<A, B> =
+  A extends B
+  ? B extends A
+    ? true
+    : false
+  : false
+;
+
+type IndexOf<T extends unknown[], U, Count extends 1[] = []> =
+  Count["length"] extends T["length"]
+  ? -1
+  : IsSame<T[Count["length"]], U> extends true
+    ? Count["length"]
+    : IndexOf<T, U, [...Count, 1]>
+;
+
+// type IndexOf<T extends unknown[], U, Count extends 1[] = []> =
+//   T extends unknown[]
+//   ? T[Count["length"]] extends U
+//     ? U extends T[Count["length"]]
+//       ? Count["length"]
+//       : IndexOf<T, U, [...Count, 1]>
+//     : IndexOf<T, U, [...Count, 1]>
+//   : -1
+
+type A = IndexOf<[1,2,3], 2>;
+  // ^?
+type B = IndexOf<[2, 6, 3, 8, 4, 1, 7, 3, 9], 3>;
+  // ^?
+type C = IndexOf<[0, 0, 0], 2>;
+  // ^?
+type D = IndexOf<[string, 1, number, 'a'], number>;
+  // ^?
+type E = IndexOf<[string, 1, number, 'a', any], any>;
+  // ^?
+type F = IndexOf<[string, 'a'], 'a'>;
+  // ^?
+type G = IndexOf<[any, 1], 1>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
