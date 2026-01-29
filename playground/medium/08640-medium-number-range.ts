@@ -16,7 +16,31 @@
 
 /* _____________ Your Code Here _____________ */
 
-type NumberRange<L, H> = any
+type CountTupleWithLength<T extends number, Count extends 1[] = []> =
+  Count['length'] extends T
+    ? Count
+    : CountTupleWithLength<T, [...Count, 1]>
+
+type NumberRange<L extends number, H extends number> =
+  ExclusiveNumberRange<L, H> | H;
+
+// type ExclusiveNumberRange<Start extends number, End extends number, Count extends unknown[] = CountTupleWithLength<Start>, Res extends number[] = []> =
+//   Count["length"] extends End
+//   ? Res[number]
+//   : ExclusiveNumberRange<Start, End, [...Count, 1], [...Res, Count["length"]]>
+// ;
+type ExclusiveNumberRange<Start extends number, End extends number, Count extends unknown[] = CountTupleWithLength<Start>, Res = never> =
+  Count["length"] extends End
+  ? Res
+  : ExclusiveNumberRange<Start, End, [...Count, 1], Res | Count["length"]>
+;
+
+type A = NumberRange<2, 9>
+  // ^?
+type B = NumberRange<0, 2>
+  // ^?
+type C = NumberRange<0, 140>
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

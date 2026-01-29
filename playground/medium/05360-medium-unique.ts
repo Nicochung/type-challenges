@@ -20,14 +20,12 @@
 
 /* _____________ Your Code Here _____________ */
 
-
 type Includes<T extends readonly any[], U> =
   T extends [infer Head, ...infer Tail]
-  ? Equal<Head, U> extends true
-    ? true
-    : Includes<Tail, U>
-  : false
-;
+    ? Equal<Head, U> extends true
+      ? true
+      : Includes<Tail, U>
+    : false
 
 // type Unique<T extends unknown[]> =
 //   T extends [...infer Head, infer Tail]
@@ -47,23 +45,21 @@ type Includes<T extends readonly any[], U> =
 
 type Unique<T extends unknown[], Acc extends unknown[] = []> =
   T extends [infer Head, ...infer Tail]
-  ? Includes<Acc, Head> extends true
-    ? Unique<Tail, Acc>
-    : Unique<Tail,[...Acc,Head]>
-  : Acc
-;
+    ? Includes<Acc, Head> extends true
+      ? Unique<Tail, Acc>
+      : Unique<Tail, [...Acc, Head]>
+    : Acc
 
-
-type A = Unique<[1, 1, 2, 2, 3, 3]>;
-  // ^?
-type B = Unique<[1, 2, 3, 4, 4, 5, 6, 7]>;
-  // ^?
-type C = Unique<[1, 'a', 2, 'b', 2, 'a']>;
-  // ^?
-type D = Unique<[string, number, 1, 'a', 1, string, 2, 'b', 2, number]>;
-  // ^?
-type E = Unique<[unknown, unknown, any, any, never, never]>;
-  // ^?
+type A = Unique<[1, 1, 2, 2, 3, 3]>
+// ^?
+type B = Unique<[1, 2, 3, 4, 4, 5, 6, 7]>
+// ^?
+type C = Unique<[1, 'a', 2, 'b', 2, 'a']>
+// ^?
+type D = Unique<[string, number, 1, 'a', 1, string, 2, 'b', 2, number]>
+// ^?
+type E = Unique<[unknown, unknown, any, any, never, never]>
+// ^?
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
 

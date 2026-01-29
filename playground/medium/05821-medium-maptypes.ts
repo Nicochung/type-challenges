@@ -39,7 +39,30 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MapTypes<T, R> = any
+type MapTypes<T extends Record<PropertyKey, any>, R extends Record<'mapFrom' | 'mapTo', any>> = {
+  [P in keyof T]: T[P] extends R['mapFrom']
+                  ? R extends { mapFrom: T[P] }
+                    ? R['mapTo']
+                    : never
+                  : T[P];
+}
+
+type A = MapTypes<{ stringToArray: string }, { mapFrom: string, mapTo: [] }>
+  // ^?
+type B = MapTypes<{ stringToNumber: string }, { mapFrom: string, mapTo: number }>
+  // ^?
+type C = MapTypes<{ stringToNumber: string, skipParsingMe: boolean }, { mapFrom: string, mapTo: number }>
+  // ^?
+type D = MapTypes<{ date: string }, { mapFrom: string, mapTo: Date } | { mapFrom: string, mapTo: null }>
+  // ^?
+type E = MapTypes<{ date: string }, { mapFrom: string, mapTo: Date | null }>
+  // ^?
+type F = MapTypes<{ fields: Record<string, boolean> }, { mapFrom: Record<string, boolean>, mapTo: string[] }>
+  // ^?
+type G = MapTypes<{ name: string }, { mapFrom: boolean, mapTo: never }>
+  // ^?
+type H = MapTypes<{ name: string, date: Date }, { mapFrom: string, mapTo: boolean } | { mapFrom: Date, mapTo: string }>
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
