@@ -18,7 +18,27 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Combination<T extends string[]> = any
+type Combination<T extends string[]> = InternalCombination<T[number]>;
+
+// InternalCombination<"a" | "b" | "c">
+type InternalCombination<S extends string> =
+  [S] extends [never]
+  ? never
+  : S | {
+    [K in S]: `${K}${InternalCombination<Exclude<S, K>> extends "" ? never : ` ${InternalCombination<Exclude<S, K>>}`}`
+  }[S]
+;
+
+type A = Combination<['a']>
+  // ^?
+type B = Combination<['a', 'b']>
+  // ^?
+type C = Combination<['a', 'b', 'c']>
+  // ^?
+// type A = Combination<['foo', 'bar', 'baz']>
+//   // ^?
+// type B = Combination<['r', 'g', 'b', 'a']>
+//   // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

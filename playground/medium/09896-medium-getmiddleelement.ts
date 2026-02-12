@@ -22,7 +22,28 @@
 
 /* _____________ Your Code Here _____________ */
 
-type GetMiddleElement<T> = any
+type GetMiddleElement<T extends unknown[]> = 
+  T["length"] extends 0 | 1 | 2
+  ? T
+  : T extends [unknown, ...infer Middle, unknown]
+    ? GetMiddleElement<Middle>
+    : never
+;
+
+type A = GetMiddleElement<[]>;
+  // ^?
+type B = GetMiddleElement<[1, 2, 3, 4, 5]>;
+  // ^?
+type C = GetMiddleElement<[1, 2, 3, 4, 5, 6]>;
+  // ^?
+type D = GetMiddleElement<[() => string]>;
+  // ^?
+type E = GetMiddleElement<[() => number, '3', [3, 4], 5]>;
+  // ^?
+type F = GetMiddleElement<[() => string, () => number]>;
+  // ^?
+type G = GetMiddleElement<[never]>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

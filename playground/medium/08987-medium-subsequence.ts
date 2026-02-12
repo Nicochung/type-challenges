@@ -20,7 +20,33 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Subsequence<T extends any[]> = any
+// type Subsequence<T extends any[]> = InternalSubsequence<T>;
+
+// type InternalSubsequence<T extends any[], Acc extends any[] = T> = 
+//   T extends []
+//   ? Acc
+//   : T extends [infer Head,  ...infer Tail]
+//     ? [Head, ...InternalSubsequence<Tail>] | InternalSubsequence<Tail>
+//     : never
+// ;
+
+type Subsequence<T extends any[]> = 
+  T extends [infer Head,  ...infer Tail]
+  ? [Head, ...Subsequence<Tail>] | Subsequence<Tail>
+  : []
+;
+
+type A = Subsequence<[1, 2]>
+  // ^?
+type E = Subsequence<[1, 2, 3]>
+  // ^?
+type B = Subsequence<[1, 2, 3, 4, 5]>
+  // ^?
+type C = Subsequence<['a', 'b', 'c']>
+  // ^?
+type D = Subsequence<['x', 'y']>
+  // ^?
+
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

@@ -19,7 +19,22 @@
 
 /* _____________ Your Code Here _____________ */
 
-type CheckRepeatedChars<T extends string> = any
+type CheckRepeatedChars<T extends string, Acc extends string = ""> =
+  T extends `${infer Head}${infer Tail}`
+  ? Head extends Acc
+    ? true
+    : CheckRepeatedChars<Tail, Acc | Head>
+  : false
+;
+
+type A = CheckRepeatedChars<"abc">;
+  // ^?
+type B = CheckRepeatedChars<"abb">;
+  // ^?
+type C = CheckRepeatedChars<"cbc">;
+  // ^?
+type D = CheckRepeatedChars<"">;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

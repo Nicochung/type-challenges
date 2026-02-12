@@ -18,7 +18,26 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ParseUrlParams<T> = any
+type InternalParseUrlParams<T extends string, Acc = never> = 
+  T extends `${string}:${infer Param}`
+  ? Param extends `${infer Param}/${infer Tail}`
+    ? InternalParseUrlParams<Tail, Acc | Param>
+    : Param | Acc
+  : Acc
+;
+
+type ParseUrlParams<T extends string> = InternalParseUrlParams<T>;
+
+type A = ParseUrlParams<''>;
+  // ^?
+type B = ParseUrlParams<':id'>;
+  // ^?
+type C = ParseUrlParams<'posts/:id'>;
+  // ^?
+type D = ParseUrlParams<'posts/:id/'>;
+  // ^?
+type E = ParseUrlParams<'posts/:id/:user'>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

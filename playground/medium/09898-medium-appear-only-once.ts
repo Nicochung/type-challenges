@@ -12,8 +12,41 @@
 
 /* _____________ Your Code Here _____________ */
 
-type FindEles<T extends any[]> = any
+type IsSame<A, B> = 
+  [A] extends [B]
+  ? [B] extends [A]
+    ? true
+    : false
+  : false
+;
 
+type CountElement<T extends unknown[], Ele = unknown, Count extends 1[] = []> =
+  T extends [infer Head, ...infer Tail]
+  ? CountElement<Tail, Ele, IsSame<Head, Ele> extends true ? [...Count, 1]: Count>
+  : Count["length"]
+;
+
+type A1 = CountElement<[1, 2, 2, 3, 3, 4, 5, 6, 6, 6], 2>;
+  // ^?
+type E1 = CountElement<[1, 2, number, number], number>;
+  // ^?
+
+type FindEles<T extends any[], Original extends any[] = T> = 
+  T extends [infer Head, ...infer Tail]
+  ? CountElement<Original, Head> extends 1 ? [Head, ...FindEles<Tail, Original>] : FindEles<Tail, Original>
+  : []
+;
+
+type A = FindEles<[1, 2, 2, 3, 3, 4, 5, 6, 6, 6]>;
+  // ^?
+type B = FindEles<[2, 2, 3, 3, 6, 6, 6]>;
+  // ^?
+type C = FindEles<[1, 2, 3]>;
+  // ^?
+type D = FindEles<[1, 2, number]>;
+  // ^?
+type E = FindEles<[1, 2, number, number]>;
+  // ^?
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
 
