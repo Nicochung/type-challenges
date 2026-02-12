@@ -33,7 +33,77 @@
 
 /* _____________ Your Code Here _____________ */
 
-type CountElementNumberToObject<T> = any
+// type IsSame<A, B> =
+//   [A] extends [B]
+//   ? [B] extends [A]
+//     ? true
+//     : false
+//   : false
+// ;
+
+// type CountElement<T extends unknown[], Ele = unknown, Count extends 1[] = []> =
+//   T extends [infer Head, ...infer Tail]
+//   ? CountElement<Tail, Ele, IsSame<Head, Ele> extends true ? [...Count, 1]: Count>
+//   : Count["length"]
+// ;
+
+// type Flatten<T extends unknown[]> =
+//   T extends [infer Head, ...infer Tail]
+//   ? Head extends unknown[]
+//     ? [...Flatten<Head>, ...Flatten<Tail>]
+//     : [Head, ...Flatten<Tail>]
+//   : []
+// ;
+
+// type Helper<T extends unknown[], Original extends unknown[] = T, Acc = {}> =
+//   T extends [infer Head extends PropertyKey, ...infer Tail]
+//   ? Acc & {[P in Head]: CountElement<Original, P>} & Helper<Tail, Original>
+//   : Acc
+// ;
+
+// type Pretty<T> = {
+//   [P in keyof T]: T[P];
+// }
+
+// type CountElementNumberToObject<T extends unknown[], Temp = Helper<Flatten<T>>> = [Temp] extends [never] ? {} : Pretty<Temp>;
+
+type IsSame<A, B> =
+  [A] extends [B]
+    ? [B] extends [A]
+        ? true
+        : false
+    : false
+
+type CountElement<T extends unknown[], Ele = unknown, Count extends 1[] = []> =
+  T extends [infer Head, ...infer Tail]
+    ? CountElement<Tail, Ele, IsSame<Head, Ele> extends true ? [...Count, 1] : Count>
+    : Count['length']
+
+type Flatten<T extends unknown[]> =
+  T extends [infer Head, ...infer Tail]
+    ? Head extends unknown[]
+      ? [...Flatten<Head>, ...Flatten<Tail>]
+      : [Head, ...Flatten<Tail>]
+    : []
+
+type Helper<T extends unknown[], Union = T[number]> = {
+  [P in Union as P extends PropertyKey ? P : never]: CountElement<T, P>;
+}
+
+type CountElementNumberToObject<T extends unknown[]> = Helper<Flatten<T>>;
+
+type A = CountElementNumberToObject<[1, 2, 3, 4, 5]>
+  // ^?
+type B = CountElementNumberToObject<[1, 2, 3, 4, 5, [1, 2, 3]]>
+  // ^?
+type C = CountElementNumberToObject<[1, 2, 3, 4, 5, [1, 2, 3, [4, 4, 1, 2]]]>
+  // ^?
+type D = CountElementNumberToObject<[never]>
+  // ^?
+type E = CountElementNumberToObject<['1', '2', '0']>
+  // ^?
+type F = CountElementNumberToObject<['a', 'b', ['c', ['d']]]>
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

@@ -37,7 +37,39 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ToPrimitive = any
+
+// type ToPrimitive<T> = 
+//   T extends string
+//   ? string
+//   : T extends number
+//     ? number
+//     : T extends bigint
+//       ? bigint
+//       : T extends boolean
+//         ? boolean
+//         : T extends symbol
+//           ? symbol
+//           : T extends null
+//             ? null
+//             : T extends undefined
+//               ? undefined
+//               : T extends object
+//                 ? T extends (...args: never[]) => unknown 
+//                   ? Function
+//                   : {[P in keyof T]: ToPrimitive<T[P]>}
+//                 : never
+// ;
+
+type ToPrimitive<T> = T extends object ? (
+  T extends (...args: never[]) => unknown ? Function : {
+    [Key in keyof T]: ToPrimitive<T[Key]>
+  }
+) : (
+  T extends { valueOf: () => infer P } ? P : T
+)
+
+type A = ToPrimitive<PersonInfo>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
