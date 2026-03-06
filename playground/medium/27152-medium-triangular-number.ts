@@ -12,7 +12,20 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Triangular<N extends number> = any
+type Triangular<N extends number, Count extends 1[] = [], Acc extends 1[] = []> =
+  Count["length"] extends N
+  ? Acc["length"]
+  : Triangular<N, [...Count, 1], [...Acc, ...Count, 1]>
+;
+
+type A1 = Triangular<0>;
+  // ^?
+type A2 = Triangular<1>;
+  // ^?
+type A3 = Triangular<3>;
+  // ^?
+type A4 = Triangular<10>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

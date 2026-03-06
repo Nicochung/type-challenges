@@ -12,7 +12,26 @@
 
 /* _____________ Your Code Here _____________ */
 
-type IsOdd<T extends number> = any
+type IsOdd<T extends number> = `${T}` extends `${bigint | ""}${1 | 3 | 5 | 7 | 9}`
+  ? true
+  : false;
+
+type A1 = IsOdd<5>;
+  // ^?
+type A2 = IsOdd<2023>;
+  // ^?
+type A3 = IsOdd<1456>;
+  // ^?
+type A4 = IsOdd<1926>;
+  // ^?
+type A5 = IsOdd<2.3>;
+  // ^?
+type A6 = IsOdd<3e23>;
+  // ^?
+type A7 = IsOdd<3e0>;
+  // ^?
+type A8 = IsOdd<number>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

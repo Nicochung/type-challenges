@@ -18,7 +18,32 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Transpose<M extends number[][]> = any
+type TransposeHelper<M extends number[][], Row extends 1[] = [], Col extends 1[] = [], Cur extends number[] = [], Acc extends number[][]= []> =
+  // for (let i = 0; i < col; ++i)
+  Col["length"] extends M[0]["length"]
+  ? Acc
+  : // for (let j = 0; j < row; ++j)
+    Row["length"] extends M["length"]
+    ? TransposeHelper<M, [], [...Col, 1],[], [...Acc, Cur]>
+    : TransposeHelper<M, [...Row, 1], Col, [...Cur, M[Row["length"]][Col["length"]]], Acc>
+;
+
+type Transpose<M extends number[][]> = TransposeHelper<M>;
+
+type A1 = Transpose<[]>;
+  // ^?
+type A2 = Transpose<[[1]]>;
+  // ^?
+type A3 = Transpose<[[1, 2]]>;
+  // ^?
+type A4 = Transpose<[[1, 2], [3, 4]]>;
+  // ^? 
+type A5 = Transpose<[[1, 2, 3], [4, 5, 6]]>;
+  // ^?
+type A6 = Transpose<[[1, 4], [2, 5], [3, 6]]>;
+  // ^?
+type A7 = Transpose<[[1, 2, 3], [4, 5, 6], [7, 8, 9]]>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

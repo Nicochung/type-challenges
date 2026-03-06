@@ -22,7 +22,35 @@
 
 /* _____________ Your Code Here _____________ */
 
-type All = any
+type All<T extends unknown[], V> = 
+  T extends [infer Head, ...infer Tail]
+  ? Equal<Head, V> extends true
+    ? All<Tail, V>
+    : false
+  : true
+;
+
+type A = [1] extends [1 | 2] ? true : false;
+  // ^?
+type B = [1|2] extends [1] ? true : false;
+  // ^?
+type C = [1] extends [1 | 2] ? true : false;
+  // ^?
+type D = [1|2] extends [1] ? true : false;
+  // ^?
+
+type A1 = All<[1, 1, 1], 1>;
+  // ^? 
+type A2 = All<[1, 1, 2], 1>;
+  // ^? 
+type A3 = All<[any], unknown>;
+  // ^? 
+type A4 = All<[unknown], any>;
+  // ^? 
+type A5 = All<[1, 1, 2], 1 | 2>;
+  // ^? 
+type A6 = All<[], 1 | 2>;
+  // ^? 
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

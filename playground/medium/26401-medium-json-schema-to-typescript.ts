@@ -17,7 +17,54 @@
 
 /* _____________ Your Code Here _____________ */
 
-type JSONSchema2TS<T> = any
+type PrimitiveType = { type: 'string' } | { type: 'number' } | { type: 'boolean' }
+type EnumType = { type: 'string', enum: string[] } | { type: 'number', enum: number[] }
+type ObjectType = { type: 'object', properties?: Record<string, PossibleType>, required?: string[] }
+type ArrayType = { type: 'array', items?: PossibleType }
+
+type PossibleType = PrimitiveType | EnumType | ObjectType | ArrayType
+
+// Primitive
+type PrimitiveJSONSchema2TS<T extends PrimitiveType> = {
+  'number': number
+  'string': string
+  'boolean': boolean
+}[T['type']]
+
+// Enum
+type EnumJSONSchema2TS<T extends EnumType> = T['enum'][number]
+
+// Object
+type Pretty<T> = {
+  [P in keyof T]: T[P];
+}
+
+type ObjectJSONSchema2TS<T extends ObjectType> =
+  T['properties'] extends Object
+    ? T['required'] extends string[]
+      ? Pretty<
+        { [K in keyof T['properties'] as Extract<K, T['required'][number]>]: JSONSchema2TS<T['properties'][K]> }
+        & { [K in keyof T['properties'] as Exclude<K, T['required'][number]>]?: JSONSchema2TS<T['properties'][K]> }
+>
+      : { [K in keyof T['properties']]?: JSONSchema2TS<T['properties'][K]> }
+    : Record<string, unknown>
+
+// Array
+type ArrayJSONSchema2TS<T extends ArrayType> =
+  T['items'] extends PossibleType
+    ? JSONSchema2TS<T['items']>[]
+    : unknown[]
+
+type JSONSchema2TS<T extends PossibleType> =
+  T extends ArrayType
+    ? ArrayJSONSchema2TS<T>
+    : T extends ObjectType
+      ? ObjectJSONSchema2TS<T>
+      : T extends EnumType
+        ? EnumJSONSchema2TS<T>
+        : T extends PrimitiveType
+          ? PrimitiveJSONSchema2TS<T>
+          : never
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

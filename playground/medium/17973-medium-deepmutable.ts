@@ -54,7 +54,9 @@
 
 /* _____________ Your Code Here _____________ */
 
-type DeepMutable = any
+type DeepMutable<T extends Record<PropertyKey, any>> = {
+  -readonly [P in keyof T]: keyof T[P] extends never ? T[P] : DeepMutable<T[P]>
+}
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

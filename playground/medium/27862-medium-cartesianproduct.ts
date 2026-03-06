@@ -16,7 +16,22 @@
 
 /* _____________ Your Code Here _____________ */
 
-type CartesianProduct<T, U> = any
+type CartesianProduct<T, U> = 
+  T extends T
+    ? U extends U
+      ?[T, U]
+    : never  
+: never
+;
+
+type A1 = CartesianProduct<1 | 2, 'a' | 'b'>;
+  // ^?
+type A2 = CartesianProduct<1 | 2 | 3, 'a' | 'b' | 'c'>;
+  // ^?
+type A3 = CartesianProduct<1 | 2, 'a' | never>;
+  // ^?
+type A4 = CartesianProduct<'a', Function | string>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

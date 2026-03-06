@@ -20,7 +20,20 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ExtractToObject<T, U> = any
+type Pretty<T> = {
+  [P in keyof T]: T[P];
+}
+
+type ExtractToObject<T extends object, U extends keyof T> = Pretty<{
+  [P in Exclude<keyof T, U>]: T[P];
+} & T[U]>;
+
+type A1 = ExtractToObject<test1, 'myProp'>;
+  // ^?
+type A2 = ExtractToObject<test2, 'prop2'>;
+  // ^?
+type A3 = ExtractToObject<test3, 'prop1'>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

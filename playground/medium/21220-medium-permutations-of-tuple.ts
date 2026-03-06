@@ -25,7 +25,29 @@
 
 /* _____________ Your Code Here _____________ */
 
-type PermutationsOfTuple<T extends unknown[]> = any
+// type PermutationsOfTupleHelper<T extends unknown[]> =
+//   T extends [infer Head, ...infer Tail]
+//     ? [Head, ...PermutationsOfTupleHelper<Tail>] | [...PermutationsOfTupleHelper<Tail>, Head]
+//     : []
+
+// type PermutationsOfTuple<T extends unknown[]> = PermutationsOfTupleHelper<T>
+
+type PermutationsOfTuple<T extends any[], Count extends 1[] = []> = T extends []
+  ? []
+  : Count['length'] extends T['length']
+    ? never
+    : T extends [infer Head, ...infer Tail]
+      ? [Head, ...PermutationsOfTuple<Tail>] | PermutationsOfTuple<[...Tail, Head], [...Count, 1]>
+      : never
+
+type A = PermutationsOfTuple<[]>
+  // ^?
+type B = PermutationsOfTuple<[any]>
+  // ^?
+type C = PermutationsOfTuple<[any, unknown]>
+  // ^?
+type D = PermutationsOfTuple<[any, unknown, never]>
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect, ExpectFalse } from '@type-challenges/utils'

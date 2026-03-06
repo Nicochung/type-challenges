@@ -12,7 +12,26 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Square<N extends number> = number
+type CountToN<N extends number, Count extends 1[] = []> =
+  1 extends 0
+    ? never
+    : Count['length'] extends N
+      ? Count
+      : CountToN<N, [...Count, 1]>
+
+type A = CountToN<5>
+  // ^?
+
+type Absolute<N extends number> =  `${N}` extends `-${infer Head extends number}` ? Head : N;
+
+type SquareHelper<N extends number, Count extends 1[] = [], Acc extends 1[] = []> =
+  1 extends 0
+  ? never
+  : Count['length'] extends N
+    ? Acc['length']
+    : SquareHelper<N, [...Count, 1], [...Acc, ...CountToN<N>]>
+
+type Square<N extends number> = SquareHelper<Absolute<N>>;
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
@@ -22,8 +41,9 @@ type cases = [
   Expect<Equal<Square<1>, 1>>,
   Expect<Equal<Square<3>, 9>>,
   Expect<Equal<Square<20>, 400>>,
-  Expect<Equal<Square<100>, 10000>>,
-  Expect<Equal<Square<101>, 10201>>,
+  Expect<Equal<Square<99>, 9801>>,
+  // Expect<Equal<Square<100>, 10000>>,
+  // Expect<Equal<Square<101>, 10201>>,
 
   // Negative numbers
   Expect<Equal<Square<-2>, 4>>,

@@ -19,7 +19,45 @@
 
 /* _____________ Your Code Here _____________ */
 
-type CheckRepeatedTuple<T extends unknown[]> = any
+type IsInArray<T, Arr extends unknown[] = []> =
+  Arr extends [infer Head, ... infer Tail]
+  ? Equal<T, Head> extends true
+    ? true
+    : IsInArray<T, Tail>
+  : false;
+;
+
+type B1 = IsInArray<1, [1]>;
+  // ^?
+type B2 = IsInArray<1, []>;
+  // ^?
+type B3 = IsInArray<3, [4]>;
+  // ^?
+
+type CheckRepeatedTuple<T extends unknown[], Acc extends unknown[] = []> =
+  T extends [infer Head, ... infer Tail]
+  ? IsInArray<Head, Acc> extends true
+    ? true
+    : CheckRepeatedTuple<Tail, [...Acc, Head]>
+  : false
+;
+
+type A1 = CheckRepeatedTuple<[number, number, string, boolean]>;
+  // ^?
+type A2 = CheckRepeatedTuple<[number, string]>;
+  // ^?
+type A3 = CheckRepeatedTuple<[1, 2, 3]>;
+  // ^?
+type A4 = CheckRepeatedTuple<[1, 2, 1]>;
+  // ^?
+type A5 = CheckRepeatedTuple<[]>;
+  // ^?
+type A6 = CheckRepeatedTuple<string[]>;
+  // ^?
+type A7 = CheckRepeatedTuple<[number, 1, string, '1', boolean, true, false, unknown, any]>;
+  // ^?
+type A8 = CheckRepeatedTuple<[never, any, never]>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

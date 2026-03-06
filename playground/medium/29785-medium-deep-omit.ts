@@ -30,7 +30,35 @@
 
 /* _____________ Your Code Here _____________ */
 
-type DeepOmit = any
+type SplitPath<T extends string> = 
+  T extends `${infer Head}.${infer Tail}`
+  ? [Head, ...SplitPath<Tail>]
+  : [T]
+;
+type B1 = SplitPath<"person">;
+  // ^?
+type B2 = SplitPath<"person.name">;
+  // ^?
+type B3 = SplitPath<"person.age.value">;
+  // ^?
+
+type DeepOmitHelper<T, Paths extends string[], Depth extends 1[] = []> = 
+  // Reach the omit level
+  [1, ...Depth]["length"] extends Paths["length"]
+  ? { [P in keyof T as P extends Paths[Depth["length"]] ? never : P]: T[P] }
+  : { [P in keyof T]: DeepOmitHelper<T[P], Paths, [...Depth, 1]> }
+;
+
+type DeepOmit<T extends object, Path extends string> = DeepOmitHelper<T, SplitPath<Path>>;
+
+type A1 = DeepOmit<obj, 'person'>;
+  // ^?
+type A2 = DeepOmit<obj, 'person.name'>;
+  // ^?
+type A3 = DeepOmit<obj, 'name'>;
+  // ^?
+type A4 = DeepOmit<obj, 'person.age.value'>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

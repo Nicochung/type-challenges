@@ -17,6 +17,18 @@
 
 type Hanoi<N extends number, From = 'A', To = 'B', Intermediate = 'C'> = any
 
+type A1 = Hanoi<0>;
+  // ^?
+type A2 = Hanoi<1>;
+  // ^?
+type A3 = Hanoi<2>;
+  // ^?
+type A4 = Hanoi<3>;
+  // ^?
+type A5 = Hanoi<5>;
+  // ^?
+
+
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
 

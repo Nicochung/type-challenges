@@ -12,7 +12,26 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ReplaceFirst<T extends readonly unknown[], S, R> = any
+type ReplaceFirst<T extends readonly unknown[], S, R> = 
+  T extends [infer Head, ...infer Tail]
+  ? Head extends S
+    ? [R, ...Tail]
+    : [Head, ... ReplaceFirst<Tail, S, R>]
+  : []
+;
+
+type A1 = ReplaceFirst<[1, 2, 3], 3, 4>;
+  // ^?
+type A2 = ReplaceFirst<['A', 'B', 'C'], 'C', 'D'>;
+  // ^?
+type A3 = ReplaceFirst<[true, true, true], true, false>;
+  // ^?
+type A4 = ReplaceFirst<[string, boolean, number], boolean, string>;
+  // ^?
+type A5 = ReplaceFirst<[1, 'two', 3], string, 2>;
+  // ^?
+type A6 = ReplaceFirst<['six', 'eight', 'ten'], 'eleven', 'twelve'>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
