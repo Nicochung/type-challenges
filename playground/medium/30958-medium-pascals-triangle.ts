@@ -13,7 +13,54 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Pascal<N extends number> = any
+
+type Counter<T extends number, Count extends 1[] = []> = Count["length"] extends T
+  ? Count
+  : Counter<T, [...Count, 1]>;
+
+type Addition<X extends number, Y extends number> = [
+  ...Counter<X>,
+  ...Counter<Y>
+]["length"];
+
+type ArrayAddition<A extends number[], B extends number[]> = [A, B] extends [
+  [infer FirstA extends number, ...infer RestA extends number[]],
+  [infer FirstB extends number, ...infer RestB extends number[]]
+]
+  ? [Addition<FirstA, FirstB>, ...ArrayAddition<RestA, RestB>]
+  : [];
+
+type Pascal<N extends number, Row extends number[] = [1]> = Row["length"] extends N
+  ? [Row]
+  : [Row, ...Pascal<N, ArrayAddition<[...Row, 0], [0, ...Row]>>];
+
+// 帕斯卡三角第一行为 [1] ，之后每行的计算方式为将上一行本身与上一行右移一位的结果相加（空缺的项用0补上） ：
+
+// // 第1行
+// [1]
+
+// // 计算第2行
+// [0,1]
+// [1,0]
+
+// // 第2行
+// [1,1]
+
+// // 计算第3行
+// [0,1,1]
+// [1,1,0]
+
+// // 第3行
+// [1,2,1]
+
+type A1 = Pascal<1>;
+  // ^?
+type A2 = Pascal<3>;
+  // ^?
+type A3 = Pascal<5>;
+  // ^?
+type A4 = Pascal<7>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

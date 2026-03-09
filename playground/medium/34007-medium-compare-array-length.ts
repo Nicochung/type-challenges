@@ -16,7 +16,20 @@
 
 /* _____________ Your Code Here _____________ */
 
-type CompareArrayLength<T extends any[], U extends any[]> = any
+type GreaterThan<T extends number, U extends number, Count extends 1[] = []> =
+  Count["length"] extends T
+  ? false
+  : Count["length"] extends U
+    ? true
+    : GreaterThan<T, U, [...Count, 1]>
+
+type CompareArrayLength<T extends any[], U extends any[]> = 
+  T["length"] extends U["length"]
+  ? 0
+  : GreaterThan<T["length"], U["length"]> extends true
+    ? 1
+    : -1
+;
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'

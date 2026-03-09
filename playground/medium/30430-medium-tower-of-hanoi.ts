@@ -15,7 +15,46 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Hanoi<N extends number, From = 'A', To = 'B', Intermediate = 'C'> = any
+// type Increment <T extends unknown[]> = [...T, T["length"]];
+
+// type Times<N extends number, Acc extends unknown[] = []> =
+//   1 extends 0
+//   ? never
+//   : Acc["length"] extends N
+//     ? Acc
+//     : Times<N, Increment<Acc>>
+// ;
+
+// type Pop<T extends unknown[]> =
+//   T extends [... infer Heads, unknown]
+//   ? Heads
+//   : never
+// ;
+
+// type MinusOne<T extends number, TIMES_RESULT extends number[] = Times<T>> =
+//   Pop<TIMES_RESULT>["length"]
+// ;
+
+// type B1 = MinusOne<5>;
+//     // ^?
+
+// type HanoiHelper<N extends number, From = 'A', To = 'B', Intermediate = 'C', Acc = []> = 
+//   N extends 0
+//   ? Acc
+//   : N extends 1
+//     ? HanoiHelper<0, From, Intermediate, To, [From, To]>
+//     : [HanoiHelper<MinusOne<N>, From, Intermediate, To, [...Acc, [From, Intermediate]]>, HanoiHelper<0, From, Intermediate, To, [From, To]> ,HanoiHelper<MinusOne<N>, Intermediate, To, From>]
+
+// type Hanoi<N extends number, From = 'A', To = 'B', Intermediate = 'C'> = HanoiHelper<N, From, To, Intermediate>;
+
+type Hanoi<N extends number, From extends string = 'A', To extends string = 'B', Intermediate extends string = 'C', Count extends 1[] = []> = 
+  Count['length'] extends N 
+  ? [] 
+  : [...Hanoi<N, From, Intermediate, To, [...Count, 1]>, 
+     [From, To], 
+     ...Hanoi<N, Intermediate, To, From, [...Count, 1]>
+    ]
+;
 
 type A1 = Hanoi<0>;
   // ^?

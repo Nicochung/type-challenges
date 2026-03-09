@@ -25,7 +25,18 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Trace<T extends any[][]> = any
+type Trace<T extends any[][], Count extends 1[] = []> = 
+  T["length"] extends Count["length"]
+  ? never
+  : T[Count["length"]][Count["length"]] | Trace<T, [...Count, 1]>
+;
+
+type A1 = Trace<[[1, 2], [3, 4]]>;
+  // ^?
+type A2 = Trace<[[0, 1, 1], [2, 0, 2], [3, 3, 0]]>;
+  // ^?
+type A3 = Trace<[['a', 'b', ''], ['c', '', ''], ['d', 'e', 'f']]>;
+  // ^?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
